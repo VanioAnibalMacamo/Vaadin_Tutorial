@@ -14,7 +14,7 @@ import com.vaadin.flow.router.Route;
 
 
 @PageTitle("Contacts | Vaadin CRM")
-@Route(value = "")
+@Route(value = "", layout = MainLayout.class)
 public class ListView extends VerticalLayout {
 
     private final CrmService service;
@@ -118,15 +118,4 @@ public class ListView extends VerticalLayout {
         }
     }
 
-
-
-      /*
-     Button button = new Button("Click Me");
-     TextField txtName = new TextField("Name");
-
-     HorizontalLayout horizontalLayout = new HorizontalLayout(txtName,button);
-     horizontalLayout.setDefaultVerticalComponentAlignment(Alignment.BASELINE);
-     button.addClickListener(click -> Notification.show("Hello "+txtName.getValue()));
-
-     add(horizontalLayout);*/
 }
