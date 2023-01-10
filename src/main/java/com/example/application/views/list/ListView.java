@@ -21,7 +21,7 @@ public class ListView extends VerticalLayout {
 
     Grid<Contact> grid = new Grid<>(Contact.class);
     TextField filterText = new TextField();
-    ContactForm contactForm;
+    ContactForm form;
 
     public ListView(CrmService service) {
         this.service = service;
@@ -39,8 +39,8 @@ public class ListView extends VerticalLayout {
     }
 
     private void closeEditor() {
-        contactForm.setContact(null);
-        contactForm.setVisible(false);
+        form.setContact(null);
+        form.setVisible(false);
         removeClassName("editing");
     }
 
@@ -49,9 +49,9 @@ public class ListView extends VerticalLayout {
     }
 
     private Component getContent() {
-        HorizontalLayout content = new HorizontalLayout(grid, contactForm);
+        HorizontalLayout content = new HorizontalLayout(grid, form);
         content.setFlexGrow(2, grid);
-        content.setFlexGrow(1, contactForm);
+        content.setFlexGrow(1, form);
         content.addClassName("content");
         content.setSizeFull();
 
@@ -59,9 +59,23 @@ public class ListView extends VerticalLayout {
     }
 
     private void configuredForm() {
-        contactForm = new ContactForm(
+        form = new ContactForm(
                 service.findAllCompanies(), service.findAllStatuses());
-        contactForm.setWidth("25em");
+        form.setWidth("25em");
+
+        form.addListener(ContactForm.SaveEvent.class, this::saveContact);
+        form.addListener(ContactForm.DeleteEvent.class, this::deleteContact);
+        form.addListener(ContactForm.CloseEvent.class, e -> closeEditor());
+    }
+    private void saveContact(ContactForm.SaveEvent event){
+       service.saveContact(event.getContact());
+       updateList();
+       closeEditor();
+    }
+    private void deleteContact(ContactForm.DeleteEvent event){
+        service.deleteContact((event.getContact()));
+        updateList();
+        closeEditor();
     }
 
     private Component getToolbar() {
@@ -98,8 +112,8 @@ public class ListView extends VerticalLayout {
         if(contact == null){
             closeEditor();
         }else{
-            contactForm.setContact(contact);
-            contactForm.setVisible(true);
+            form.setContact(contact);
+            form.setVisible(true);
             addClassName("editing");
         }
     }
